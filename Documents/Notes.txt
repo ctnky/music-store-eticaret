@@ -1,0 +1,272 @@
+﻿https://trello.com/b/OaHWHNee/musicstore
+Blank solution oluşturuldu
+BLL, Core, DAL, Model projeleri class library olarak eklendi.
+UI.MVC projesi Empty,MVC olarak eklendi
+
+1		CORE PROJESİNDE
+1.1		Entity klasörü oluşturuldu
+1.1.1	BaseEntity class'ı oluşturuldu
+		BaseEntity class'ı interface değil abstract yapıldı çünkü ctor yapılamıyor interface'te.
+
+		    public abstract class BaseEntity
+				{
+					public BaseEntity()
+					{
+						IsDeleted = false;
+						CreatedDate = DateTime.Now;
+					}
+
+					public int ID { get; set; }
+					public bool IsDeleted { get; set; }
+					public DateTime CreatedDate { get; set; }
+				}
+
+1.2		DAL klasörü oluşturuldu
+1.2.1	IRepository interface'i oluşturuldu
+		IRepository içerisindeki Expressionlar, LINQ kullanılması için yapılmış.
+		where kısmını neden yazdım? sadece BaseEntity'den kalıtım alanlara etki etmesi için.
+
+				   public interface IRepository<TEntity>
+				where TEntity : BaseEntity
+			{
+				void Add(TEntity entitiy);
+				void Update(TEntity entity);
+				void Remove(TEntity entity);
+
+				TEntity Get(Expression<Func<TEntity, bool>> filter = null);
+				ICollection<TEntity> GetAll(Expression<Func<TEntity, bool>> filter = null);
+			}
+
+1.2.2	EntityFramework klasörü oluşturuldu
+1.2.2.1 EFRepositoryBase isminde public class oluşturuldu
+
+	  public class EFRepositoryBase<TEntity, TContext> : IRepository<TEntity>
+        where TEntity:BaseEntity, new()
+        where TContext:DbContext, new()
+    {
+        public void Add(TEntity entitiy)
+        {
+          
+        }
+
+        public TEntity Get(Expression<Func<TEntity, bool>> filter = null)
+        {
+           
+        }
+
+        public ICollection<TEntity> GetAll(Expression<Func<TEntity, bool>> filter = null)
+        {
+           
+        }
+
+        public void Remove(TEntity entity)
+        {
+           
+        }
+
+        public void Update(TEntity entity)
+        {
+        
+        }
+    }
+
+1.3 Entity Framework Core projesine eklendi. (NuGet)
+1.2.2.2 EFSingletonContext isimli public class oluşturuldu.
+sebebi: bir kere alınsın nesne, her class ayaga kalkarken tekrar tekrar nesne oluşturulmasın, mevcut nesne üzerinden işlem yapılmaya devam etsin.
+
+				 public class EFSingletonContext<TContext>
+				where TContext : DbContext, new()
+			{
+				private static TContext _instance;
+				public static TContext Instance
+				{
+					get
+					{
+						if (_instance == null)
+						{
+							_instance = new TContext();
+						}
+						return _instance;
+					}
+				}
+			}
+
+1.2.2.2 EFRepositoryBase'e devam
+usinglerde Linkq ve Linq.Expressions olduguna emin ol.
+ public class EFRepositoryBase<TEntity, TContext> : IRepository<TEntity>
+        where TEntity : BaseEntity, new()
+        where TContext : DbContext, new()
+    {
+        TContext ctx = EFSingletonContext<TContext>.Instance;
+
+        public void Add(TEntity entity)
+        {
+            ctx.Entry(entity).State = EntityState.Added;
+            ctx.SaveChanges();
+        }
+
+        public TEntity Get(Expression<Func<TEntity, bool>> filter = null)
+        {
+            return ctx.Set<TEntity>().Where(filter).SingleOrDefault();
+        }
+
+        public ICollection<TEntity> GetAll(Expression<Func<TEntity, bool>> filter = null)
+        {
+            if (filter==null)
+            {
+                return ctx.Set<TEntity>().ToList();
+            }
+            else
+            {
+                return ctx.Set<TEntity>().Where(filter).ToList();
+            }
+        }
+
+        public void Remove(TEntity entity)
+        {
+            ctx.Entry(entity).State = EntityState.Deleted;
+        }
+
+        public void Update(TEntity entity)
+        {
+            ctx.Entry(entity).State = EntityState.Modified;
+            ctx.SaveChanges();
+        }
+    }
+
+2 MODEL PROJESİNDE
+2.1 referanslara Core ekledik.
+2.2 Album isimli public class oluşturduk.
+
+  public class Album:BaseEntity
+    {
+        public Album()
+        {
+            Discounted = false;
+
+        }
+
+        public string Title { get; set; }
+        public string AlbumUrl { get; set; }
+        public decimal Price { get; set; }
+        public short Stock { get; set; }
+        public bool Discounted { get; set; }
+
+        //Mapping işlemi yapılacak
+    }
+
+2.3 Artist isimli public class oluşturuldu
+
+    public class Artist : BaseEntity
+    {
+        public string FullName { get; set; }
+        public byte Rating { get; set; }
+
+        // Mapping
+
+        public virtual ICollection<Album> Albums { get; set; }
+    }
+
+2.4 Genre isimli public class oluşturuldu
+
+	 public class Genre:BaseEntity
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        // Mapping
+
+        public virtual ICollection<Album> Albums { get; set; }
+    }
+
+2.5 Order isimli public class oluşturuldu
+
+    public class Order : BaseEntity
+    {
+        public int UserID { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime ShippedDate { get; set; }
+        public int ShipperID { get; set; }
+        public string ShipAdress { get; set; }
+        public string Phone { get; set; }
+        public string  Mail { get; set; }
+
+        // Mapping
+    }
+
+
+2.6 OrderDetail public class'ı oluşturuldu.
+
+    public class OrderDetail
+    {
+        public int OrderID { get; set; }
+        public int AlbumID { get; set; }
+        public short Quantity { get; set; }
+        public double Discount { get; set; }
+        public bool IsCanceled { get; set; } // sipariş iptal olsa da içerdiği bilgi önemli oldugundan duracak.
+        public string Notes { get; set; }
+
+        // Mapping
+
+        public virtual Order Order { get; set; }
+        public virtual Album Album { get; set; }
+
+    }
+
+2.7 Shipper public class'ı oluşturuldu.
+
+ public class Shipper : BaseEntity
+    {
+        public string CompanyName { get; set; }
+        public string Phone { get; set; }
+
+        // Mapping
+        public virtual ICollection<Order> Orders { get; set; }
+    }
+
+2.8 User public class'ı oluşturuldu.
+
+    public class User : BaseEntity
+    {
+        public User()
+        {
+            IsApproved = false;
+        }
+
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Phone { get; set; }
+        public string Mail { get; set; }
+        public string Adress { get; set; }
+        public string Notes { get; set; }
+        public DateTime BirthDate { get; set; }
+        public bool IsApproved { get; set; }
+
+        //Mapping
+
+        public virtual ICollection<Order> Orders { get; set; }
+    }
+
+2.9 diğer classlara eklemeler: mappingler
+
+Album:
+
+        public int GenreID { get; set; }
+        public int ArtistID { get; set; }
+
+        //Mapping
+
+        public virtual Genre Genre { get; set; }
+        public virtual Artist Artist { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+
+Order:
+
+   public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual User User { get; set; }
+        public virtual Shipper Shipper { get; set; }
+
+tüm tablolar hazır.
+
