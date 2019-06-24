@@ -3,7 +3,7 @@ Blank solution oluşturuldu
 BLL, Core, DAL, Model projeleri class library olarak eklendi.
 UI.MVC projesi Empty,MVC olarak eklendi
 
-1		CORE PROJESİNDE
+1		CORE
 1.1		Entity klasörü oluşturuldu
 1.1.1	BaseEntity class'ı oluşturuldu
 		BaseEntity class'ı interface değil abstract yapıldı çünkü ctor yapılamıyor interface'te.
@@ -134,7 +134,7 @@ usinglerde Linkq ve Linq.Expressions olduguna emin ol.
         }
     }
 
-2 MODEL PROJESİNDE
+2 MODEL
 2.1 referanslara Core ekledik.
 2.2 Album isimli public class oluşturduk.
 
@@ -269,4 +269,57 @@ Order:
         public virtual Shipper Shipper { get; set; }
 
 tüm tablolar hazır.
+
+3 DAL
+3.1		core ve model referans olarak eklendi
+3.2		Abstract diye klasör yaptık.
+3.2.1	bi IAlbumDAL public interface eklendi. IRepository'den kalıtım alıyor.
+3.2.2	aynısı IArtistDAL, IGenreDAL, IOrderDAL, IShipperDAL, IUserDAL da yapılıyor.
+3.3.1	Concrete klasörü yaptık, içerisine AlbumRepository yaptık. EFRepository'den kalıtım alıyor.			  henüz dbcontext bağlamıyoruz.
+3.3.2	EntityFramework'ü DAL'a ekliyoruz. + MusicStoreDbContext oluşturuyoruz, DbContext'ten kalıtım alıyor.
+3.3.3	AlbumRepository içerisindeki DbContext bölümüne MusicStoreDbContext yazıyoruz.
+3.3.4	aynı işlemleri Artist,Genre,Order,Shipper,User için de yapıyoruz.
+3.3.5	MusicStoreDbContext'in içi dolduruluyor.
+
+    public class MusicStoreDbContext : DbContext
+    {
+        public MusicStoreDbContext()
+            : base("Server = CTNKYWORKS ; Database = MusicStoreDb; Trusted_Connection=true")
+        {
+            ////
+        }
+
+        public DbSet<Album> Albums { get; set; }
+        public DbSet<Artist> Artists { get; set; }
+        public DbSet<Genre> Genres { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+    }
+
+3.3.6 MyStrategy diye bi class oluşturuyoruz.
+	  drive'daki içerik txt dosyasını indiriyoruz. içerigini yapıştırıyoruz.
+3.3.7 MusicStoreDbContext içine SetInitializer ayarlıyoruz.
+3.3.8 OrderDetailMapping diye bi class oluşturuyoruz.
+
+  class OrderDetailMapping : EntityTypeConfiguration<OrderDetail>
+    {
+        public OrderDetailMapping()
+        {
+            HasKey(a => new { a.OrderID, a.AlbumID });
+        }
+    }
+
+3.3.9 musicstoredbcontexe mapping eklemesi.
+      protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Configurations.Add(new OrderDetailMapping());
+        }
+
+
 

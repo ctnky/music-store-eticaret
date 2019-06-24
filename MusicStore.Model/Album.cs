@@ -14,7 +14,7 @@ namespace MusicStore.Model
         }
 
         public string Title { get; set; }
-        public string AlbumUrl { get; set; }
+        public string AlbumArtUrl { get; set; }
         public decimal Price { get; set; }
         public short Stock { get; set; }
         public bool Discounted { get; set; }
