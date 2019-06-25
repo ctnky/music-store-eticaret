@@ -321,5 +321,94 @@ tüm tablolar hazır.
             modelBuilder.Configurations.Add(new OrderDetailMapping());
         }
 
+3.4.0 mystrategy'ye eklemeler.
+
+		context.Genres.AddRange(genres);
+		context.Artists.AddRange(artists);
+		context.SaveChanges();
+
+4 BLL
+
+4.1 Abstract ve Concrete klasörleri oluşturuluyor.
+4.1.1 BLL'e Core, DAL ve Model reference verilir.
+4.1.2 Abstract klasöründe IBaseService interface'i oluşturulur.
+
+    public interface IBaseService<T>
+        where T : BaseEntity
+    {
+        void Insert(T entity);
+        void Delete(T entity);
+        void DeleteById(int entityID);
+        void Update(T entity);
+        T Get(int entityID);
+        ICollection<T> GetAll();
+    }
+
+4.1.3 IAlbumService public interface oluşturulur, IBaseService'ten kalıtım alır.
+4.1.4 aynısı Artist, Genre, Order, Shipper ve User için de yapılır.
+4.1.5 BLL'e Ninject indirilecek. (NuGet) ve 3.2.0 sürümü olmalı.
+4.1.6 Ninject klasörü oluşturuldu. (Container isimli klasör oluşturulup içerisine Ninject olabilirdi)
+4.1.7 içerisine CustomDALModule class'ı oluşturuldu. NinjectModule'den kalıtım aldı.
+ 
+ public class CustomDALModule : NinjectModule
+    {
+        public override void Load()
+        {
+            Bind<IAlbumDAL>().To<AlbumRepository>();
+            Bind<IArtistDAL>().To<ArtistRepository>();
+            Bind<IGenreDAL>().To<GenreRepository>();
+            Bind<IOrderDAL>().To<OrderRepository>();
+            Bind<IShipperDAL>().To<ShipperRepository>();
+            Bind<IUserDAL>().To<UserRepository>();
+        }
+    }
+
+4.2.8 Concrete klasörünün içerisine AlbumService,ArtistService...UserService oluşturulup IAlbumService vs'den kalıtım alıyor.
+
+ilgili IDAL'dan yansıma alıp ctor'da tamamlanır, interface implementlerin içinde de tamamlanır.
+
+public class AlbumService : IAlbumService
+    {
+        IAlbumDAL _albumDAL;
+
+        public AlbumService(IAlbumDAL album)
+        {
+            _albumDAL = album;
+        }
+
+        public void Delete(Album entity)
+        {
+            _albumDAL.Remove(entity);
+        }
+
+        public void DeleteById(int entityID)
+        {
+            Album album = _albumDAL.Get(a => a.ID == entityID);
+            Delete(album);
+        }
+
+        public Album Get(int entityID)
+        {
+            return _albumDAL.Get(a => a.ID == entityID);
+        }
+
+        public ICollection<Album> GetAll()
+        {
+            return _albumDAL.GetAll();
+        }
+
+        public void Insert(Album entity)
+        {
+            _albumDAL.Add(entity);
+        }
+
+        public void Update(Album entity)
+        {
+            _albumDAL.Update(entity);
+        }
+    }
+
+	Artist, Genre, Order, Shipper ve User için de aynısı yapılıyor.
+
 
 

@@ -427,6 +427,10 @@ namespace MusicStore.DAL.Concrete
                 new Album { Title = "Bach: The Cello Suites", Genre = genres.Single(g => g.Name == "Classical"), Price = 8.99M, Artist = artists.Single(a => a.FullName == "Yo-Yo Ma"), AlbumArtUrl = "/Content/Images/placeholder.gif" },
                 new Album { Title = "Ao Vivo [IMPORT]", Genre = genres.Single(g => g.Name == "Latin"), Price = 8.99M, Artist = artists.Single(a => a.FullName == "Zeca Pagodinho"), AlbumArtUrl = "/Content/Images/placeholder.gif" },
             }.ForEach(a => context.Albums.Add(a));
+
+            context.Genres.AddRange(genres);
+            context.Artists.AddRange(artists);
+            context.SaveChanges();
         }
     }
 }
