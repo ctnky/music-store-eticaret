@@ -7,6 +7,6 @@ namespace MusicStore.BLL.Abstract
 {
     public interface IUserService : IBaseService<User>
     {
-
+        User GetUserByLogin(string username, string password);
     }
 }

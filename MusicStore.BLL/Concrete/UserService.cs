@@ -37,6 +37,11 @@ namespace MusicStore.BLL.Concrete
             return _userDAL.GetAll();
         }
 
+        public User GetUserByLogin(string username, string password)
+        {
+            return _userDAL.Get(a => a.UserName == username && a.Password == password);
+        }
+
         public void Insert(User entity)
         {
             _userDAL.Add(entity);

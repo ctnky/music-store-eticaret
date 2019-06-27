@@ -408,7 +408,183 @@ public class AlbumService : IAlbumService
         }
     }
 
-	Artist, Genre, Order, Shipper ve User için de aynısı yapılıyor.
+4.2.9	Artist, Genre, Order, Shipper ve User için de aynısı yapılıyor.
 
+5	UI.MVC
+5.1 Model, Core ve BLL'in referansı verilir
+5.2 Ninject.MVC4 ekleniyor. versiyonu 3.2.0 olacak. App_Start klasörünü NinjectWebCommon class'ı geldi.
+5.3 NinjectWebCommon'da RegisterServices'e eklemeler yapılıyor.
 
+5.4 HomeController ekleniyor. (hata alınırsa solution rebuild)
+5.4.1 Add View
 
+5.5 AccountController ekleniyor, eklemeler yapılıyor.
+add view derken details seçilir, user seçilir, scripts tiklenir.
+
+5.6 ve WebConfig'e gelip add namespace=musicstore.model yazabiliriz.sonra da using kısmında sadece user olarak güncellenebilir. sonra tüm içerigi siliyoruz zira hocanın hoşuna gitmemiş. tekrar yazıyoruz. details seçmemiş gibi oldu.
+
+<div class="col-lg-12">
+    <div class="col-lg-5">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3>Kullanıcı Kayıt Ekranı</h3>
+            </div>
+            <div class="panel-body">
+                @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                {
+                    <fildset>
+                        <p>
+                            <label>Username:</label>
+                            @Html.TextBoxFor(a => a.UserName, new { @class = "form-control" })
+                        </p>
+                        <p>
+                            <label>Password:</label>
+                            @Html.TextBoxFor(a => a.Password, new { @class = "form-control" })
+                        </p>
+                        <p>
+                            <label>Name:</label>
+                            @Html.TextBoxFor(a => a.FirstName, new { @class = "form-control" })
+                        </p>
+                        <p>
+                            <label>Surname:</label>
+                            @Html.TextBoxFor(a => a.LastName, new { @class = "form-control" })
+                        </p>
+                        <p>
+                            <label>Phone:</label>
+                            @Html.TextBoxFor(a => a.Phone, new { @class = "form-control" })
+                        </p>
+                        <p>
+                            <label>Mail:</label>
+                            @Html.TextBoxFor(a => a.Mail, new { @class = "form-control", type = "email" })
+                        </p>
+                        <p>
+                            <label>Adress:</label>
+                            @Html.TextBoxFor(a => a.Adress, new { @class = "form-control" })
+                        </p>
+                        <p>
+                            <label>Notes:</label>
+                            @Html.TextAreaFor(a => a.Notes, new { @class = "form-control" })
+                        </p>
+                        <p>
+                            <label>Birthdate:</label>
+                            @Html.TextBoxFor(a => a.BirthDate, new { @class = "form-control", type = "date" })
+                        </p>
+                        <p>
+                            <input type="submit" name="name" value="SAVE" class="btn btn-success" />
+                        </p>
+                    </fildset>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+5.7	hata verdi, bll'de entity framework unutmuşuz. (çözmedi)
+hata duruyor.
+
+5.8	AccountController'a register httppost eklendi.
+ [HttpPost]
+        public ActionResult Register(User user)
+        {
+            try
+            {
+                _userService.Insert(user);
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Successfully signed up.";
+                return View();
+            }
+            return RedirectToAction("Login", "Account");
+        }
+
+5.9		Tools diye bi klasör oluşturuldu, MailHelper diye de class eklendi.
+
+    public static bool SendConfirmationMail(string username, string password, string mail, int id)
+        {
+            bool result = false;
+            MailMessage msg = new MailMessage();
+            msg.To.Add(mail);
+            msg.Subject = "Welcome";
+            msg.IsBodyHtml = true;
+            msg.Body = "Thank you for signing in";
+            msg.From = new MailAddress("bilgeinsan1530@gmail.com");
+            SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+            smtpClient.EnableSsl = true;
+            NetworkCredential credential = new NetworkCredential("bilgeinsan1530@gmail.com", "Bilge1530insan.");
+            smtpClient.Credentials = credential;
+            try
+            {
+                smtpClient.Send(msg);
+                result = true;
+            }
+            catch (Exception)
+            {
+                result = false;
+
+            }
+            return result;
+        }
+
+5.9.1	Daha az güvenli erişim'i açmak lazım google ayarlardan.
+5.9.2 Register actionresult'a eklemeler.
+
+UI'da EF yokmuş, ekliyoruz.
+register sayfasını çalıştırıyoruz, tüm txtbox'ları doldurup submit diyoruz, db oluşuyor.
+
+5.9.3 AccountController'a Login() eklendi, view eklendi.
+
+view içi:
+
+@model User
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="col-lg-5">
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3>Kullanıcı Kayıt Ekranı</h3>
+                </div>
+                <div class="panel-body">
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                    {
+                        <fildset>
+                            <p>
+                                <label>Username:</label>
+                                @Html.TextBoxFor(a => a.UserName, new { @class = "form-control" })
+                            </p>
+                            <p>
+                                <label>Password:</label>
+                                @Html.TextBoxFor(a => a.Password, new { @class = "form-control" })
+                            </p>
+                            <p>
+                                <input type="submit" name="name" value="LOGIN" class="btn btn-success" />
+                            </p>
+                        </fildset>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+5.9.4 HttpPost eklendi Login'e.
+
+ [HttpPost]
+        public ActionResult Login(User user)
+        {
+            return View();
+        }
+
+5.9.5 BLL'de Abstract'tan IUserService açtık.
+
+    User GetUserByLogin(string username, string password);
+
+5.9.6 Concrete > UserService'e tekrar impelemnt edilir.
+
+   return _userDAL.Get(a => a.UserName == username && a.Password == password);
+
+5.9.7 AccountController > Login devam.
+
+	
