@@ -721,4 +721,124 @@ view içi:
             return PartialView(_albumService.GetLastFiveAlbums());
         }
 
-5.12	
+5.12	Home>DiscountedAlbums'te 0,2 olacak.
+5.13 bazı değişiklikler yapıldı.
+tüm partialview'lerde 0,5 olan yer 0,2 olacak.
+ayrıca _discountedalbumse if eklenip else'ine foreach taşınacak.
+
+5.14 index'e eklemeler
+
+@section scripts{
+<script>
+    funtion AddToMyCart(aid) {
+        $.ajax({
+            type: "Get",
+            url: '@Url.Action("AddToCart","Cart")',
+            data{ id: aid },
+            success: function (data) {
+
+            }
+        })
+    }
+    </script>
+}
+
+5.15 _Layout'a eklemeler
+
+ <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Store","Index","Home")</li>
+                    @*<li>@Html.Action()</li>*@
+                </ul>
+
+5.16 CartController eklendi.
+
+5.17 Cart klasörüne _CartButton partialview eklendi.
+
+5.18 Global.asax'ın  içindeki kodlar silindi, sonra dosya silindi. ardından tekrar eklendi.
+
+5.19 Model klasörüne CartItemViewModel diye class oluşturuldu.
+
+ public class CartItemViewModel
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public short Amount { get; set; }
+        public decimal SubTotal {
+            get
+            {
+                return Price * Amount;
+            }
+        }
+    }
+
+5.20 MyCart diye bi class oluşturduk
+
+    public class MyCart
+    {
+        private Dictionary<int, CartItemViewModel> _sepet = new Dictionary<int, CartItemViewModel>();
+
+        public List<CartItemViewModel> GetAllCartItems {
+            get
+                {
+                return _sepet.Values.ToList();
+                }
+        }
+    }
+
+5.21 Add, Update, Delete, TotalAmount metotları eklendi.
+
+        public void Add(CartItemViewModel cartItem)
+        {
+            if (_sepet.ContainsKey(cartItem.ID))
+            {
+                _sepet[cartItem.ID].Amount += cartItem.Amount;
+                return;
+            }
+
+            _sepet.Add(cartItem.ID, cartItem);
+        }
+
+        public void Update(int id, short amount)
+        {
+            if (_sepet.ContainsKey(id))
+            {
+                _sepet[id].Amount = amount;
+            }
+        }
+
+        public void Delete(int id)
+        {
+            if (_sepet.ContainsKey(id))
+            {
+                _sepet.Remove(id);
+            }
+        }
+
+        public int TotalAmount{ get
+            {
+                return _sepet.Values.Sum(a => a.Amount);
+            }
+        }
+
+5.22 Global.asax'a eklemeler.
+     AreaRegistration.RegisterAllAreas();
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+			 Session["cart"] = new MyCart();
+
+5.23 Cart>_CartButton içine eklemeler.
+
+@using MusicStore.UI.MVC.Models
+
+@Html.ActionLink("Cart(" + (Session["cart"] as MyCart).TotalAmount + ")", "Index", "Cart");
+
+5.24 Shared>_Layout içerisine yorumda bıraktığımız <li> içerisine eklemeler.	  
+
+  <li>@Html.Action("_CartButton","Cart")</li>
+
+5.25 index'e geri dönüp eklemeler.
+
+function (data) {
+$("menu li:nth-child(2)").html(data);
+}

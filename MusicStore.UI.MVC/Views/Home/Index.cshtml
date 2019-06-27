@@ -6,26 +6,46 @@
 
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#home"></a></li>
-    <li><a data-toggle="tab" href="#menu1">İNDİRİMDEKİLER</a></li>
-    <li><a data-toggle="tab" href="#menu2">EN SON EKLENEN 5 ÜRÜN</a></li>
+    <li><a data-toggle="tab" href="#menu1">İndirimdekiler</a></li>
+    <li><a data-toggle="tab" href="#menu2">En Son Eklenen 5 Urun</a></li>
 </ul>
 
 <div class="tab-content">
     <div id="home" class="tab-pane fade in active">
         <div class="col-lg-2" style="float:left">
             <ul id="genreMenu" class="nav nav-pills nav-stacked">
-                @Html.Action("_GenreMenu", "Home")
+                <li>@Html.Action("_GenreMenu", "Home")</li>
             </ul>
         </div>
         <div id="albumList" class="col-lg-10">
             @Html.Action("_GenreOfAlbums", "Home")
         </div>
     </div>
-</div>
 
-<div id="menu1" class="tab-pane fade">
-    <div class="col-lg-12">
-        @Html.Action("_DiscountedAlbums", "Home")
+    <div id="menu1" class="tab-pane fade">
+        <div class="col-lg-12">
+            @Html.Action("_DiscountedAlbums", "Home")
+        </div>
     </div>
 
+    <div id="menu2" class="tab-pane fade">
+        <div class="col-lg-12">
+            @Html.Action("_LastFiveAlbums", "Home")
+        </div>
+    </div>
 </div>
+
+@section scripts{
+    <script>
+    funtion AddToMyCart(aid) {
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("AddToCart", "Cart")',
+                data{ id: aid },
+                success: function (data) {
+                    $("menu li:nth-child(2)").html(data);
+                }
+            });
+    }
+    </script>
+}

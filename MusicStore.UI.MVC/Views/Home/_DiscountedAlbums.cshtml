@@ -1,28 +1,36 @@
 ﻿@model List<Album>
 
-@foreach (Album item in Model)
+@if (ViewBag.Error != null)
 {
-    <div class="col-lg-4">
-        <div class="panel panel-default">
-            <div class="panel panel-heading">
-                <span title="@item.Title">@item.Title.Substring(0, 5)</span>
-            </div>
-            <div class="panel panel-body">
-                <div style="width:100%;height:75%;">
-                    <img src="@item.AlbumArtUrl" style="width:100%;height:100%" alt="@item.Title" />
+    <span>@ViewBag.Error</span>
+}
+else
+{
+    foreach (Album item in Model)
+    {
+        <div class="col-lg-4">
+            <div class="panel panel-default">
+                <div class="panel panel-heading">
+                    <span title="@item.Title">@item.Title.Substring(0, 2)</span>
                 </div>
-                <div style="height:25%;">
-                    <div class="col-lg-1">
-                        @item.Price
+                <div class="panel panel-body">
+                    <div style="width:100%;height:75%;">
+                        <img src="@item.AlbumArtUrl" style="width:100%;height:100%" alt="@item.Title" />
                     </div>
-                    <div class="col-lg-5">
+                    <div style="height:25%;">
+                        <div class="col-lg-1">
+                            @item.Price
+                        </div>
+                        <div class="col-lg-5">
 
-                    </div>
-                    <div class="col-lg-3">
-                        <input type="button" name="name" class="btn btn-warning" onclick="AddToMyCart(@item.ID)" value="Add Cart" />
+                        </div>
+                        <div class="col-lg-3">
+                            <input type="button" name="name" class="btn btn-warning" onclick="AddToMyCart(@item.ID)" value="Add Cart" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 }
+
