@@ -110,6 +110,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\home-showcase.png" />
+    <Content Include="Content\placeholder.gif" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -149,6 +151,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Home\_GenreMenu.cshtml" />
+    <Content Include="Views\Home\_GenreOfAlbums.cshtml" />
+    <Content Include="Views\Home\_LastFiveAlbums.cshtml" />
+    <Content Include="Views\Home\_DiscountedAlbums.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

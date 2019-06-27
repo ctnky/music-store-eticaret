@@ -587,4 +587,138 @@ view içi:
 
 5.9.7 AccountController > Login devam.
 
+	    [HttpPost]
+        public ActionResult Login(User user)
+        {
+            var gelenKullanici = _userService.GetUserByLogin(user.UserName, user.Password);
+            if (gelenKullanici != null)
+            {
+                Session["kullanici"] = gelenKullanici;
+                return RedirectToAction("Index", "Home");
+            }
+            ViewBag.Error = "Kullanıcı bulunamadı";
+            return View();
+        }
+
+5.9.8 Projenin klasörüne gelinip, Content> Images klasörüne gelip placeholder.gif yapıştırılır.
+
+5.9.9 HomeController'a eklemeler.
+
+    IAlbumService _albumService;
+        IGenreService _genreService;
+
+        public HomeController(IAlbumService album, IGenreService genre)
+        {
+            _albumService = album;
+            _genreService = genre;
+        }
+
+5.6 View>Home> _GenreMenu isminde partial view ekleniyor.
+
+@model List<Genre>
+
+@foreach (Genre item in Model)
+{
+    <li id="menu_@item.ID"><a href='javascript:void{0}' onclick="GenreByAlbumList(@item.ID)">@item.Name</a></li>
+}
+
+5.7 Viev>Home> _GenreOfAlbums isimli partial veiw ekleniyor.
+
+@foreach (Album item in Model)
+{
+<div class="col-lg-4">
+    <div class="panel panel-default">
+        <div class="panel panel-heading">
+            <span title="@item.Title">@item.Title.Substring(0,5)</span>
+        </div>
+        <div class="panel panel-body">
+            <div style="width:100%;height:75%;">
+                <img src="@item.AlbumArtUrl" style="width:100%;height:100%" alt="@item.Title" />
+            </div>
+            <div style="height:25%;">
+                <div class="col-lg-1">
+                    @item.Price
+                </div>
+                <div class="col-lg-5">
+
+                </div>
+                <div class="col-lg-3">
+                    <input type="button" name="name" class="btn btn-warning" onclick="AddToMyCart(@item.ID)" value="Add Cart"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+5.8 Views>Home> _LastFiveAlbums partial view eklendi.
+5.9 DiscountedAlbums eklendi
+
+5.10 BLL>Abstract>IAlbumService içerisine eklemeler.
 	
+	 List<Album> GetAlbumOfGenre(int genreID);
+        List<Album> GetDiscountedAlbums();
+        List<Album> GetLastFiveAlbums();
+
+5.11	sonra tekrardan Concrete Album service içerisine impelent ediliyor, içleri dolduruluyor.
+
+	using System.Linq; eklendi.
+
+	     public List<Album> GetDiscountedAlbums()
+        {
+            return _albumDAL.GetAll(a => a.Discounted).ToList();
+        }
+
+        public List<Album> GetLastFiveAlbums()
+        {
+            return _albumDAL.GetAll().OrderByDescending(a => a.CreatedDate).Take(5).ToList();
+        }
+
+        public List<Album> GetAlbumOfGenre(int genreID)
+        {
+            return _albumDAL.GetAll(a => a.GenreID == genreID).ToList();
+        }
+
+5.11	HomeController'a eklemeler.
+
+        public ActionResult Index()
+        {
+            var albums = _albumService.GetAll();
+            return View();
+        }
+
+        public ActionResult _GenreOfAlbums(int? id)
+        {
+            if (id != null)
+            {
+                return PartialView(_albumService.GetAlbumOfGenre(id.Value).ToList());
+            }
+
+            return PartialView(_albumService.GetAll());
+        }
+
+        public ActionResult _GenreMenu()
+        {
+
+            return PartialView(_genreService.GetAll());
+        }
+
+        public ActionResult _DiscountedAlbums()
+        {
+            var indirimdekiler = _albumService.GetDiscountedAlbums().ToList();
+
+            if (indirimdekiler.Count == 0)
+            {
+                ViewBag.Error = "İndirimde ürünümüz bulunmamaktadır";
+                return PartialView();
+            }
+
+            return PartialView(indirimdekiler);
+        }
+
+        public ActionResult _LastFiveAlbums()
+        {
+            return PartialView(_albumService.GetLastFiveAlbums());
+        }
+
+5.12	

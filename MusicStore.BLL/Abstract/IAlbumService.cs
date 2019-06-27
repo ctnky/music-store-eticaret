@@ -7,6 +7,10 @@ namespace MusicStore.BLL.Abstract
 {
     public interface IAlbumService : IBaseService<Album>
     {
-        // ihtiyaca göre  buraya kodlar eklenecek.
+        // controller tarafında oluşacak ihtiyaca göre buraya metot oluşturulacak
+
+        List<Album> GetAlbumOfGenre(int genreID);
+        List<Album> GetDiscountedAlbums();
+        List<Album> GetLastFiveAlbums();
     }
 }

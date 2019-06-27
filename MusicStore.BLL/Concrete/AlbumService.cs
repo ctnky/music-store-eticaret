@@ -1,9 +1,8 @@
 ﻿using MusicStore.BLL.Abstract;
 using MusicStore.DAL.Abstract;
 using MusicStore.Model;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace MusicStore.BLL.Concrete
 {
@@ -32,6 +31,7 @@ namespace MusicStore.BLL.Concrete
             return _albumDAL.Get(a => a.ID == entityID);
         }
 
+
         public ICollection<Album> GetAll()
         {
             return _albumDAL.GetAll();
@@ -45,6 +45,21 @@ namespace MusicStore.BLL.Concrete
         public void Update(Album entity)
         {
             _albumDAL.Update(entity);
+        }
+
+        public List<Album> GetDiscountedAlbums()
+        {
+            return _albumDAL.GetAll(a => a.Discounted).ToList();
+        }
+
+        public List<Album> GetLastFiveAlbums()
+        {
+            return _albumDAL.GetAll().OrderByDescending(a => a.CreatedDate).Take(5).ToList();
+        }
+
+        public List<Album> GetAlbumOfGenre(int genreID)
+        {
+            return _albumDAL.GetAll(a => a.GenreID == genreID).ToList();
         }
     }
 }
