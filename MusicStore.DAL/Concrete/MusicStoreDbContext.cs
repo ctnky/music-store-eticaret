@@ -23,6 +23,7 @@ namespace MusicStore.DAL.Concrete
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Properties().Where(a => a.PropertyType == typeof(DateTime)).Configure(a => a.HasColumnType("datetime2"));
             modelBuilder.Configurations.Add(new OrderDetailMapping());
         }
     }

@@ -117,6 +117,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\Areas\Views\web.config" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -131,9 +132,14 @@
   <ItemGroup>
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Areas\AreasAreaRegistration.cs" />
+    <Compile Include="Areas\Areas\Controllers\AdminManagerController.cs" />
+    <Compile Include="Areas\Areas\Controllers\GenreManagerController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="CustomFilter\LoginFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -170,6 +176,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\Areas\Models\" />
+    <Folder Include="Areas\Areas\Views\AdminManager\" />
+    <Folder Include="Areas\Areas\Views\Admin\" />
+    <Folder Include="Areas\Areas\Views\GenreManager\" />
+    <Folder Include="Areas\Areas\Views\Shared\" />
+    <Folder Include="Views\Order\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MusicStore.BLL\MusicStore.BLL.csproj">

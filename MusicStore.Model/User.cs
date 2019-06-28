@@ -18,7 +18,7 @@ namespace MusicStore.Model
         public string LastName { get; set; }
         public string Phone { get; set; }
         public string Mail { get; set; }
-        public string Adress { get; set; }
+        public string Address { get; set; }
         public string Notes { get; set; }
         public DateTime BirthDate { get; set; }
         public bool IsApproved { get; set; }

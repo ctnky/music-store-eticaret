@@ -1009,6 +1009,94 @@ proje çalışmıyordu, layout'da li'ye menu id'si ekledik, düzeldi.
     </script>
 }
 
+5.33 OrderController oluşturduk.
 
+  public class OrderController : Controller
+    {
+        IOrderService _orderService;
+
+        public OrderController(IOrderService order)
+        {
+            _orderService = order;
+        }
+
+        public ActionResult ConfirtCart()
+        {
+            if (Session["cart"] != null)
+            {
+                MyCart cart = Session["cart"] as MyCart;
+                if (cart.GetAllCartItems.Count > 0)
+                {
+                    MusicStore.Model.User kullanici = Session["kullanici"] as User;
+                    Order order = new Order();
+                    order.OrderDate = DateTime.Now;
+                    order.ShipAdress = kullanici.Adress;
+                    order.ShippedDate = DateTime.Now;
+                    order.ShipperID = 1;
+                }
+            }
+            return View();
+        }
+    }
+
+5.34 SQL'den Table,Shipper'a geldik, id'si 1 olan bi shipper ekleniyor.
+
+5.35 order controller'a devam.
+
+                    order.ShipperID = 1;
+                    order.Mail = kullanici.Mail;
+                    order.UserID = kullanici.ID;
+                    order.OrderDetails = new List<OrderDetail>();
+                    foreach (CartItemViewModel item in cart.GetAllCartItems)
+                    {
+                        OrderDetail od = new OrderDetail();
+                        od.AlbumID = item.ID;
+                        od.Quantity = item.Amount;
+                        od.IsCanceled = false;
+                        od.Discount = 0;
+                        order.OrderDetails.Add(od);
+                    }
+                    _orderService.Insert(order);
+                    Session["cart"] = new MyCart();
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            return RedirectToAction("Index", "Cart"); ;
+
+5.36 _CartList'de ekleme.
+
+   @Html.ActionLink("Sepeti Onayla", "ConfirmCart", "Order")
+
+5.37 datetime hata veriyor. hepsi datetime2'ye çevrilmeli.
+bunun için DAL>Concrete>MusicStoreDbContext'e gelinir.
+
+    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Properties().Where(a => a.PropertyType == typeof(DateTime)).Configure(a => a.HasColumnType("datetime2"));
+            modelBuilder.Configurations.Add(new OrderDetailMapping());
+        }
+
+5.38 CustomFilter diye bi klasör açıp içine LoginFilter diye public class oluşturduk.
+
+public class LoginFilter : AuthorizeAttribute
+    {
+        protected override bool AuthorizeCore(HttpContextBase httpContext)
+        {
+            //kullanıcı girişi varken
+            if (System.Web.HttpContext.Current.Session["kullanici"] != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            //kullanıcı girişi yok
+            filterContext.Result = new RedirectResult("/Account/Login");
+        }
+    }
+
+5.39 Areas ekleniyor UI'ya. GenreManager ve AdminManager Controller'ları geliyor. Bunlar ÖDEV
 
 
