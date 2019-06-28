@@ -734,7 +734,7 @@ ayrıca _discountedalbumse if eklenip else'ine foreach taşınacak.
         $.ajax({
             type: "Get",
             url: '@Url.Action("AddToCart","Cart")',
-            data{ id: aid },
+            data: { id: aid },
             success: function (data) {
 
             }
@@ -842,3 +842,173 @@ ayrıca _discountedalbumse if eklenip else'ine foreach taşınacak.
 function (data) {
 $("menu li:nth-child(2)").html(data);
 }
+
+5.26 index'e eklemelere devam.
+
+  function GenreByAlbumList(id) {
+            $("#genreMenu li").removeClass("active");
+            $("#menu_" + id).addClass("activve");
+
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("_GenreofAlbums","Home")',
+                data: { id: id },
+                success: function (data) {
+                    $("#albumList").html(data);
+                }
+            })
+
+5.27 _layout'a <script>'lerden sonra bi satır eklendi.
+   @RenderSection("scripts", false);
+
+5.28 cartcontroller'a eklemeler.
+>> MyCart içerisindeki Add methodu ismi AddCart oldu.
+
+    public class CartController : Controller
+    {
+        IAlbumService _albumService;
+
+        public CartController(IAlbumService album)
+        {
+            _albumService = album;
+        }
+        // GET: Cart
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult _CartButton()
+        {
+            return PartialView();
+        }
+
+        public ActionResult AddToCart(int id)
+        {
+            MyCart cart = Session["cart"] as MyCart;
+            CartItemViewModel cartItem = new CartItemViewModel();
+            var eklenenAlbum = _albumService.Get(id);
+            cartItem.ID = eklenenAlbum.ID;
+            cartItem.Name = eklenenAlbum.Title;
+            cartItem.Price = eklenenAlbum.Discounted ? eklenenAlbum.Price * 0.9m : eklenenAlbum.Price;
+            cartItem.Amount = 1;
+            cart.AddCart(cartItem);
+            Session["cart"] = cart;
+            return PartialView("_CartButton");
+        }
+    }
+
+proje çalışmıyordu, layout'da li'ye menu id'si ekledik, düzeldi.
+
+5.29 CartController'a eklemeler.
+
+ public ActionResult _CartList()
+        {
+
+            return PartialView();
+        }
+
+        public ActionResult UpdateCart(short amount, int id)
+        {
+            MyCart guncellenenSepet = Session["cart"] as MyCart;
+            guncellenenSepet.Update(id, amount);
+            Session["cart"] = guncellenenSepet;
+            return RedirectToAction("_CartList", "Cart");
+        }
+
+5.30 Cart>_CartList diye bi partialpage oluşturuldu.
+
+@using MusicStore.UI.MVC.Models
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Amount</th>
+            <th>SubTotal</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (CartItemViewModel item in (Session["cart"] as MyCart).GetAllCartItems)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td><input type="number" id="txtAmount" value="@item.Amount" min="0" onchange="CartUpdate(this.value, @item.ID)"</td>
+                <td>@item.SubTotal</td>
+                <td><a href="Javascript:void(0)" onclick="DeleteItemCart(@item.ID)">DELETE</a></td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4">TOTAL</td>
+            <td>@((Session["cart"] as MyCart).TotalAmount.ToString("C2")</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                @Html.ActionLink("Sepeti Onayla", "", "");
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+5.31 CartController'a eklemeler.
+
+     public ActionResult DeleteItemFromCart(int id)
+        {
+            MyCart silinecekCart = Session["cart"] as MyCart;
+            silinecekCart.Delete(id);
+            Session["cart"] = silinecekCart;
+
+            return RedirectToAction("_CartList", "Cart");
+        }
+
+5.32 CartController Index View eklendi.
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row">
+    <div id="dvSepet" class="col-lg-8">
+        @Html.Action("_CartList", "Cart")
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        function CartUpdate(deger, gid) {
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("UpdateCart","Cart")',
+                data: { amount: deger, id: gid },
+                success: function (data) {
+                    $("#dvSepet").html(data);
+                }
+            })
+        }
+
+        function DeleteItemFromCart(gid) {
+            var cvp = confirm("Are you sure?")
+            if (cvp) {
+                $.ajax({
+                    type: "Get",
+                    url:'@Url.Action("DeleteItemFromCart", "Cart")',
+                    data: { id: gid },
+                    success: function (data) {
+                        $("#dvSepet").html(data);
+                    }
+                })
+            }
+        }
+    </script>
+}
+
+
+
+

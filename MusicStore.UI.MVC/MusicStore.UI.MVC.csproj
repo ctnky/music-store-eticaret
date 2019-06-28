@@ -159,6 +159,8 @@
     <Content Include="Views\Home\_LastFiveAlbums.cshtml" />
     <Content Include="Views\Home\_DiscountedAlbums.cshtml" />
     <Content Include="Views\Cart\_CartButton.cshtml" />
+    <Content Include="Views\Cart\_CartList.cshtml" />
+    <Content Include="Views\Cart\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

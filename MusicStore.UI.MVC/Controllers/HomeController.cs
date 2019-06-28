@@ -29,7 +29,7 @@ namespace MusicStore.UI.MVC.Controllers
         {
             if (id != null)
             {
-                return PartialView(_albumService.GetAlbumOfGenre(id.Value).ToList());
+                return PartialView(_albumService.GetAlbumOfGenre(id.Value));
             }
 
             return PartialView(_albumService.GetAll());

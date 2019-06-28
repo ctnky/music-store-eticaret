@@ -17,7 +17,7 @@ namespace MusicStore.UI.MVC.Models
             }
         }
 
-        public void Add(CartItemViewModel cartItem)
+        public void AddCart(CartItemViewModel cartItem)
         {
             if (_sepet.ContainsKey(cartItem.ID))
             {

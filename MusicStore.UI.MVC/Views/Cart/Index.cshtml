@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="row">
+    <div id="dvSepet" class="col-lg-8">
+        @Html.Action("_CartList", "Cart")
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        function CartUpdate(deger, gid) {
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("UpdateCart","Cart")',
+                data: { amount: deger, id: gid },
+                success: function (data) {
+                    $("#dvSepet").html(data);
+                }
+            })
+        }
+
+        function DeleteItemFromCart(gid) {
+            var cvp = confirm("Are you sure?")
+            if (cvp) {
+                $.ajax({
+                    type: "Get",
+                    url:'@Url.Action("DeleteItemFromCart", "Cart")',
+                    data: { id: gid },
+                    success: function (data) {
+                        $("#dvSepet").html(data);
+                    }
+                })
+            }
+        }
+    </script>
+}

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.Core", "MusicStore.Core\MusicStore.Core.csproj", "{5362A5BC-4BF2-45A1-BCCC-720198F9CB69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicStore.Core", "MusicStore.Core\MusicStore.Core.csproj", "{5362A5BC-4BF2-45A1-BCCC-720198F9CB69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.Model", "MusicStore.Model\MusicStore.Model.csproj", "{CCCCFBD7-4B18-4B67-BD3C-42AFCDA713E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicStore.Model", "MusicStore.Model\MusicStore.Model.csproj", "{CCCCFBD7-4B18-4B67-BD3C-42AFCDA713E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.DAL", "MusicStore.DAL\MusicStore.DAL.csproj", "{C30B1CDC-AC0A-4012-9D1F-358E16ABDDD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicStore.DAL", "MusicStore.DAL\MusicStore.DAL.csproj", "{C30B1CDC-AC0A-4012-9D1F-358E16ABDDD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.BLL", "MusicStore.BLL\MusicStore.BLL.csproj", "{C7D93D8E-C762-4869-9DF9-3E63209DD90B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicStore.BLL", "MusicStore.BLL\MusicStore.BLL.csproj", "{C7D93D8E-C762-4869-9DF9-3E63209DD90B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.UI.MVC", "MusicStore.UI.MVC\MusicStore.UI.MVC.csproj", "{8BB023BD-F5FA-41A4-97FC-BB7E0A72F408}"
 EndProject

@@ -6,8 +6,8 @@
 
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#home"></a></li>
-    <li><a data-toggle="tab" href="#menu1">İndirimdekiler</a></li>
-    <li><a data-toggle="tab" href="#menu2">En Son Eklenen 5 Urun</a></li>
+    <li><a data-toggle="tab" href="#menu1">DISCOUNTED</a></li>
+    <li><a data-toggle="tab" href="#menu2">LAST ADDED 5 ALBUMS</a></li>
 </ul>
 
 <div class="tab-content">
@@ -37,15 +37,28 @@
 
 @section scripts{
     <script>
-    funtion AddToMyCart(aid) {
+    function AddToMyCart(aid) {
             $.ajax({
                 type: "Get",
-                url: '@Url.Action("AddToCart", "Cart")',
-                data{ id: aid },
+                url: '@Url.Action("AddToCart","Cart")',
+                data: { id: aid },
                 success: function (data) {
-                    $("menu li:nth-child(2)").html(data);
+                    $("#menu li:nth-child(2)").html(data);
                 }
             });
-    }
+        }
+
+        function GenreByAlbumList(id) {
+            $("#genreMenu li").removeClass("active");
+            $("#menu_" + id).addClass("active");
+            $.ajax({
+                type: "Get",
+                url: '@Url.Action("_GenreOfAlbums","Home")',
+                data: { id: id },
+                success: function (data) {
+                    $("#albumList").html(data);
+                }
+            });
+        }
     </script>
 }
